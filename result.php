@@ -1,10 +1,11 @@
 <?php
 // This script is the modified version of "submit.php" provided by Jeremy Hajek.
 
+echo "Hello";
 session_start();
 var_dump($_POST);
 if(!empty($_POST)){
-echo $_POST['email'];
+echo $_POST['useremail'];
 echo $_POST['phone'];
 }
 else
@@ -22,8 +23,9 @@ if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
 echo 'Here is some more debugging info:';
 print_r($_FILES);
 print "</pre>";
-require 'vendor/autoload.php';
 
+
+require 'vendor/autoload.php';
 #use Aws\S3\S3Client;
 #$client = S3Client::factory();
 $s3 = new Aws\S3\S3Client([
@@ -42,7 +44,7 @@ $result = $s3->createBucket([
     'Bucket' => $bucket
 ]);
 # PHP version 3
-$result = $client->putObject([
+$result = $s3->putObject([
     'ACL' => 'public-read',
     'Bucket' => $bucket,
    'Key' => $uploadfile
@@ -51,6 +53,7 @@ $result = $client->putObject([
 ]);  
 $url = $result['ObjectURL'];
 echo $url;
+
 $rds = new Aws\Rds\RdsClient([
     'version' => 'latest',
     'region'  => 'us-east-1'
