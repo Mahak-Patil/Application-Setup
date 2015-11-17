@@ -74,17 +74,17 @@ else {
 echo "All is good";
 }
 
-if (!($stmt = $link->prepare("INSERT INTO ITMO-544-Table (uName, email,phone,rawS3Url,finishedS3rawurl,jpgFileName,state) VALUES (?,?,?,?,?,?,?)"))) {
+if (!($stmt = $link->prepare("INSERT INTO ITMO-544-Table (uName,email,phone,rawS3Url,finishedS3Url,jpgFileName,state) VALUES (?,?,?,?,?,?,?)"))) {
     echo "Prepare failed: (" . $link->errno . ") " . $link->error;
 }
-$uname="Mahak Patil";
+$uName="Mahak Patil";
 $email = $_POST['useremail'];
-$phoneforsms = $_POST['phone'];
-$raws3url = $url; 
-$finisheds3url = "none";
-$jpegfilename = basename($_FILES['userfile']['name']);
+$phone = $_POST['phone'];
+$rawS3Url = $url; 
+$finishedS3Url = "none";
+$jpgFileName = basename($_FILES['userfile']['name']);
 $state=0;
-$stmt->bind_param("ssssssi",$uname,$email,$phoneforsms,$raws3url,$finisheds3url,$jpegfilename,$state);
+$stmt->bind_param("ssssssi",$uName,$email,$phone,$rawS3Url,$finishedS3Url,$jpgFileName,$state);
 if (!$stmt->execute()) {
     echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
 }
@@ -97,4 +97,5 @@ while ($row = $res->fetch_assoc()) {
     echo $row['id'] . " " . $row['email']. " " . $row['phone'];
 }
 $link->close();
+
 ?> 
