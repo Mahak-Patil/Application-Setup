@@ -18,12 +18,16 @@ echo $email;
 
 require 'vendor/autoload.php';
 //create client for s3 bucket
-use Aws\Rds\RdsClient;
-$client = RdsClient::factory(array(
-'region'  => 'us-east-1'
-));
-
-$result = $client->describeDBInstances(array('DBInstanceIdentifier' => 'ITMO-544-Database',
+//use Aws\Rds\RdsClient;
+//$client = RdsClient::factory(array(
+//'region'  => 'us-east-1'
+//));
+$rds = new Aws\Rds\RdsClient([
+  'version' => 'latest'
+  'region' => 'us-east-1'
+  
+]);
+$result = $rds->describeDBInstances(array('DBInstanceIdentifier' => 'ITMO-544-Database',
 ));
 
 $endpoint = $result['DBInstances'][0]['Endpoint']['Address'];
