@@ -5,6 +5,8 @@
 # Then in your shell script change this file to have permission 600 so no one can run it again afterwards.
 
 //conection: 
+
+require 'vendpr/autoload.php';
 $rds = new Aws\Rds\RdsClient([
  'version' => 'latest',
  'region'  => 'us-east-1'
@@ -32,5 +34,5 @@ CHECK(state IN(0,1,2)),
 datetime timestamp,
 )");
 
-shell_exec("chmod 600 setup.php"); //NEED TO VERIFY THIS!!
+shell_exec("chmod 600 setup.php"); 
 ?>
