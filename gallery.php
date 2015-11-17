@@ -23,8 +23,8 @@ require 'vendor/autoload.php';
 //'region'  => 'us-east-1'
 //));
 $rds = new Aws\Rds\RdsClient([
-  'version' => 'latest'
-  'region' => 'us-east-1'
+  'version' => 'latest',
+  'region'  => 'us-east-1'
   
 ]);
 $result = $rds->describeDBInstances(array('DBInstanceIdentifier' => 'ITMO-544-Database',
