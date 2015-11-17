@@ -7,22 +7,25 @@
   <script src="fotorama.js"></script>
 </head>
 <body>
+<div class="fotorama" data-width="700" data-ratio="700/467" data-max-width="100%">
+
 
 <?php
 // NOTE: code provided by Jeremy Hajek is modified.
 session_start();
-require 'vendor/autoload.php';
+$email = $_POST["email"];
+echo $email;
 
+require 'vendor/autoload.php';
 //create client for s3 bucket
 use Aws\Rds\RdsClient;
 $client = RdsClient::factory(array(
 'region'  => 'us-east-1'
 ));
 
-$result = $client->describeDBInstances(['DBInstanceIdentifier' => 'ITMO-544-Database',
-]);
+$result = $client->describeDBInstances(array('DBInstanceIdentifier' => 'ITMO-544-Database',
+));
 
-$endpoint = "";
 $endpoint = $result['DBInstances'][0]['Endpoint']['Address'];
 
 //echo "begin database";
@@ -35,11 +38,15 @@ if (mysqli_connect_errno()) {
 }
 
 //below line is unsafe - $email is not checked for SQL injection -- don't do this in real life or use an ORM instead
-$link->real_query("SELECT * FROM ITM)-544-Database");
-//$link->real_query("SELECT * FROM items");
+$link->real_query("SELECT * FROM ITM0-544-Table");
 $res = $link->use_result();
+while ($row = $res->fetch_assoc())
+{
+  echo "<img src =\"" . $row['rawS3Url']."\" /><img src =\"" .$row['finishedS3Url'] . "\"/>";
+  echo $row['id'] . "Email: " . $row['email'];
+}
 $link->close();
 ?>
-
+</div>
 </body>
 </html>
