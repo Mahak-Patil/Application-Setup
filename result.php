@@ -141,7 +141,7 @@ header('Here it is -> ' . $url, true);
 die();
 }
 else{
-    $url	= "temp.php";
+    $url	= "gohere.php";
    header('Location: ' . $url, true);
    die();
 }
