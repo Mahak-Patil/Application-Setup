@@ -14,8 +14,6 @@ Username: <input type="text" name="firstname"><br />
 Send this file: <input name="userfile" type="file" accept="image/png,image/jpeg"/><br />
 Email of user: <input type="email" name="useremail"><br />
 Phone number (1-XXX-XXX-XXXX): <input type="phone" name="phone">
-
-
 <input type="submit" value="Send File" />
 </form>
 </body>
