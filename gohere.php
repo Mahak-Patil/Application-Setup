@@ -34,7 +34,7 @@ $result1 = $result->listTopics(array(
     
 ));
 #print_r($result1);
-//to retrieve Topic ARN of ImageTopicSK
+
 foreach ($result1['Topics'] as $key => $value){
 if(preg_match("/SnsImageTopicName/", $result1['Topics'][$key]['TopicArn'])){
 $topicARN =$result['Topics'][$key]['TopicArn'];
