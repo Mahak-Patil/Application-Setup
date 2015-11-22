@@ -15,10 +15,8 @@ $result = $rds->describeDBInstances(array(
  'DBInstanceIdentifier' => 'ITMO-544-Database'
 ));
 $endpoint = $result['DBInstances'][0]['Endpoint']['Address'];
-$link = mysqli_connect($endpoint,"controller","ilovebunnies") or die("Error " . mysqli_error($link)); 
-
-echo "Here is the result: " . $link;
-
+echo "============\n". $endpoint . "================";
+$link = mysqli_connect($endpoint,"controller","ilovebunnies","CloudProject") or die("Error " . mysqli_error($link)); 
 
 $link->query("CREATE TABLE ITMO-544-Table 
 (
