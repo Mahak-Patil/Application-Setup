@@ -90,7 +90,7 @@ $result1 = $result->listTopics(array(
     
 ));
 foreach ($result1['Topics'] as $key => $value){
-if(preg_match("/ImageTopicSK/", $result1['Topics'][$key]['TopicArn'])){
+if(preg_match("/SnsImageTopicName/", $result1['Topics'][$key]['TopicArn'])){
 $topicARN =$result['Topics'][$key]['TopicArn'];
 }
 }
