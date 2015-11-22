@@ -7,14 +7,21 @@ var_dump($_POST);
 if(!empty($_POST)){
 echo $_POST['useremail'];
 echo $_POST['phone'];
+echo $_POST['firstname'];
+$_SESSION['firstname']=$_POST['firstname'];
+$_SESSION['phone']=$_POST['phone'];
+$_SESSION['useremail']=$_POST['useremail'];
 }
+
 else
 {
 echo "post empty";
 }
+
 $uploaddir = '/tmp/';
 $uploadfile = $uploaddir . basename($_FILES['userfile']['name']);
 print '<pre>';
+
 if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
   echo "File is valid, and successfully uploaded.\n";
 } else {
@@ -47,7 +54,7 @@ $result = $s3->createBucket([
 $result = $s3->putObject([
     'ACL' => 'public-read',
     'Bucket' => $bucket,
-   'Key' => $uploadfile
+   'Key' => $uploadfile,
    'ContentType' => $_FILES['userfile']['type'],
    'Body' => fopen($uploadfile,'r+')
 ]);  
@@ -61,10 +68,10 @@ $rds = new Aws\Rds\RdsClient([
 $result = $rds->describeDBInstances(array(
     'DBInstanceIdentifier' => 'ITMO-544-Database'
 ));	
-$endpoint = $result['DBInstances']['Endpoint']['Address']
-    echo "============\n". $endpoint . "================";^M
+$endpoint = $result['DBInstances'][0]['Endpoint']['Address'];
+    echo "============\n". $endpoint . "================";
 //echo "begin database";^M
-$link = mysqli_connect($endpoint,"controller","ilovebunnies") or die("Error " . mysqli_error($link));
+$link = mysqli_connect($endpoint,"controller","ilovebunnies","CloudProject") or die("Error " . mysqli_error($link));
 /* check connection */
 if (mysqli_connect_errno()) {
     printf("Connect failed: %s\n", mysqli_connect_error());
@@ -73,6 +80,21 @@ if (mysqli_connect_errno()) {
 else {
 echo "All is good";
 }
+
+#Creating SNS client
+$result = new Aws\Sns\SnsClient([
+    'version' => 'latest',
+    'region'  => 'us-east-1'
+]);
+$result1 = $result->listTopics(array(
+    
+));
+foreach ($result1['Topics'] as $key => $value){
+if(preg_match("/ImageTopicSK/", $result1['Topics'][$key]['TopicArn'])){
+$topicARN =$result['Topics'][$key]['TopicArn'];
+}
+}
+
 
 if (!($stmt = $link->prepare("INSERT INTO ITMO-544-Table (uName,email,phone,rawS3Url,finishedS3Url,jpgFileName,state) VALUES (?,?,?,?,?,?,?)"))) {
     echo "Prepare failed: (" . $link->errno . ") " . $link->error;
@@ -84,12 +106,29 @@ $rawS3Url = $url;
 $finishedS3Url = "none";
 $jpgFileName = basename($_FILES['userfile']['name']);
 $state=0;
+
+$res = $link->query("SELECT * FROM ITMO-544-Table where email='$email'");
+if($res->num_rows>0){
+if (!($stmt = $link->prepare("INSERT INTO ITMO-544-Table (uName,email,phone,rawS3Url,finishedS3Url,jpgFileName,state) VALUES (?,?,?,?,?,?,?)"))) {
+    echo "Prepare failed: (" . $link->errno . ") " . $link->error;
+}
+
 $stmt->bind_param("ssssssi",$uName,$email,$phone,$rawS3Url,$finishedS3Url,$jpgFileName,$state);
 if (!$stmt->execute()) {
-    echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+    echo "Execute failed: (" . $stmt->errno0 . ") " . $stmt->error;
 }
+
 printf("%d Row inserted.\n", $stmt->affected_rows);
 $stmt->close();
+
+$pub = $result->publish(array(
+    'TopicArn' => $topicARN,
+    'Subject' => 'ITMO-544',
+    'Message' => 'Here is a sample message',   
+));
+
+
+
 $link->real_query("SELECT * FROM ITMO-544-Table");
 $res = $link->use_result();
 echo "Result set order...\n";
@@ -100,4 +139,10 @@ $link->close();
 $url = "gallery.php";
 header('Here it is -> ' . $url, true);
 die();
+}
+else{
+    $url	= "temp.php";
+   header('Location: ' . $url, true);
+   die();
+}
 ?> 
